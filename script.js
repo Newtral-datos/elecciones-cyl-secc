@@ -197,5 +197,15 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     document.getElementById('geocoder-container').appendChild(geocoder.onAdd(map));
+
+    // ── Toggle leyenda en móvil ──
+    const legendEl2 = document.getElementById('legend');
+    const legendToggle = document.getElementById('legend-toggle');
+    if (legendToggle && window.innerWidth <= 600) {
+      legendEl2.classList.add('collapsed');
+      legendToggle.addEventListener('click', () => {
+        legendEl2.classList.toggle('collapsed');
+      });
+    }
   });
 });
