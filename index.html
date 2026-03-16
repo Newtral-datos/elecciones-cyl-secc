@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elecciones CyL 2026 — Resultados por sección censal</title>
+
+  <!-- MapLibre GL JS -->
+  <script src="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.css" rel="stylesheet" />
+
+  <!-- PMTiles plugin -->
+  <script src="https://unpkg.com/pmtiles@3.0.7/dist/pmtiles.js"></script>
+
+  <!-- Geocoder -->
+  <script src="https://unpkg.com/@maplibre/maplibre-gl-geocoder@1.5.0/dist/maplibre-gl-geocoder.min.js"></script>
+  <link href="https://unpkg.com/@maplibre/maplibre-gl-geocoder@1.5.0/dist/maplibre-gl-geocoder.css" rel="stylesheet" />
+
+  <style>
+    :root {
+      --accent: #01f3b3;
+      --accent-dark: #00A983;
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background: #f3f4f5;
+    }
+
+    #map {
+      width: 100%;
+      height: 100vh;
+    }
+
+    .maplibregl-popup-content {
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+      padding: 12px 14px 10px;
+      font-family: var(--font-main);
+      border: 2px solid #000;
+    }
+
+    .popup-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 2px;
+      color: #1f2937;
+    }
+
+    .popup-subtitle {
+      font-size: 11px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .popup-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .popup-table tbody tr:not(:last-child) td {
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .td-partido {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 4px 4px 0;
+      font-weight: 400;
+      color: #374151;
+      white-space: nowrap;
+    }
+
+    .td-num {
+      text-align: right;
+      padding: 4px 4px 4px 8px;
+      color: #374151;
+      white-space: nowrap;
+    }
+
+    .td-pct {
+      text-align: right;
+      padding: 4px 0 4px 4px;
+      color: #9ca3af;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .td-bold { font-weight: 700; }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: inline-block;
+    }
+
+    .popup-meta {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px solid #f3f4f6;
+    }
+
+    .maplibregl-popup-close-button {
+      font-size: 16px;
+      padding: 4px 8px;
+      color: #6b7280;
+    }
+
+    .maplibregl-popup-close-button:hover {
+      color: #1f2937;
+      background: transparent;
+    }
+
+    .controls-container {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .legend {
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: 10px;
+      padding: 10px 10px 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 148px;
+    }
+
+    .legend-header {
+      margin-bottom: 2px;
+    }
+
+    .legend-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #111827;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      line-height: 1.2;
+    }
+
+    .legend-hint {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-top: 1px;
+    }
+
+    .legend-item {
+      display: block;
+      width: 100%;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: white;
+      text-align: center;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s, transform 0.1s;
+      user-select: none;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+
+    .legend-item:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+
+    .legend-item:active {
+      transform: translateY(0);
+    }
+
+    .legend-item.off {
+      opacity: 0.22;
+      box-shadow: none;
+    }
+
+    #geocoder-container {
+      position: absolute;
+      top: 10px;
+      right: 50px;
+      z-index: 1000;
+    }
+
+    .maplibregl-ctrl-geocoder {
+      min-width: 240px;
+      border-radius: 4px !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+      border: none !important;
+    }
+
+    .maplibregl-ctrl-geocoder input {
+      border-radius: 4px !important;
+      height: 36px !important;
+    }
+
+    .maplibregl-ctrl-geocoder .suggestions {
+      border-radius: 4px !important;
+    }
+
+    /* Responsive para móviles */
+    @media (max-width: 600px) {
+      #geocoder-container {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+      }
+
+      .maplibregl-ctrl-geocoder {
+        min-width: 100% !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        font-size: 12px !important;
+        border-radius: 4px !important;
+      }
+
+      .maplibregl-ctrl-geocoder input {
+        font-size: 13px !important;
+        height: 32px !important;
+        padding-left: 28px !important;
+        border-radius: 4px !important;
+      }
+
+      .maplibregl-ctrl-geocoder--icon-search {
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        left: 8px !important;
+        width: 16px !important;
+        height: 16px !important;
+      }
+
+      .controls-container {
+        top: 56px;
+        left: 10px;
+        right: 10px;
+      }
+
+      .maplibregl-ctrl-top-right {
+        top: auto !important;
+        bottom: 30px !important;
+        right: 10px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="geocoder-container"></div>
+
+  <div class="controls-container">
+    <div class="legend">
+      <div class="legend-header">
+        <div class="legend-title">Partido ganador</div>
+        <div class="legend-hint">Pulsa para filtrar</div>
+      </div>
+      <div id="legend-items"></div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
