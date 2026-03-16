@@ -140,65 +140,77 @@
     }
 
     .legend {
-      background: rgba(255, 255, 255, 0.97);
-      border-radius: 10px;
-      padding: 10px 10px 8px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      background: rgba(15, 15, 20, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 12px;
+      padding: 12px 12px 10px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255,255,255,0.06);
       display: flex;
       flex-direction: column;
       gap: 5px;
-      min-width: 148px;
+      min-width: 152px;
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
     .legend-header {
-      margin-bottom: 2px;
+      margin-bottom: 4px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     .legend-title {
       font-size: 11px;
       font-weight: 700;
-      color: #111827;
+      color: rgba(255,255,255,0.92);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
       line-height: 1.2;
     }
 
     .legend-hint {
-      font-size: 10px;
-      color: #9ca3af;
-      margin-top: 1px;
+      font-size: 9.5px;
+      color: rgba(255,255,255,0.38);
+      margin-top: 2px;
+      letter-spacing: 0.02em;
     }
 
     .legend-item {
       display: block;
       width: 100%;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 3px;
+      font-size: 11px;
       font-weight: 700;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.03em;
       color: white;
       text-align: center;
       cursor: pointer;
       border: none;
-      transition: opacity 0.2s, transform 0.1s;
+      transition: opacity 0.2s, filter 0.2s, transform 0.12s;
       user-select: none;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.25);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      filter: saturate(0.95) brightness(1.05);
     }
 
     .legend-item:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      transform: translateX(2px);
+      filter: saturate(1.1) brightness(1.1);
     }
 
     .legend-item:active {
-      transform: translateY(0);
+      transform: translateX(0);
     }
 
     .legend-item.off {
-      opacity: 0.22;
-      box-shadow: none;
+      opacity: 0.18;
+      filter: saturate(0) brightness(0.8);
+    }
+
+    #legend-items {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     #geocoder-container {
@@ -262,8 +274,8 @@
       }
 
       .legend {
-        padding: 6px 8px 6px;
-        gap: 3px;
+        padding: 8px 10px 8px;
+        gap: 4px;
         min-width: unset;
         flex-direction: row;
         flex-wrap: wrap;
@@ -273,6 +285,7 @@
       .legend-header {
         width: 100%;
         margin-bottom: 0;
+        padding-bottom: 6px;
         display: flex;
         align-items: baseline;
         gap: 6px;
