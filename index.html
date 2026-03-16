@@ -157,6 +157,10 @@
       margin-bottom: 4px;
       padding-bottom: 8px;
       border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
     }
 
     .legend-title {
@@ -211,6 +215,32 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
+      overflow: hidden;
+      transition: max-height 0.25s ease, opacity 0.2s;
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    .legend.collapsed #legend-items {
+      max-height: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .legend-header {
+      cursor: pointer;
+    }
+
+    .legend-arrow {
+      color: rgba(255,255,255,0.5);
+      font-size: 14px;
+      line-height: 1;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .legend.collapsed .legend-arrow {
+      transform: rotate(-90deg);
     }
 
     #geocoder-container {

@@ -201,8 +201,8 @@ document.addEventListener("DOMContentLoaded", function() {
     // ── Toggle leyenda en móvil ──
     const legendEl2 = document.getElementById('legend');
     const legendToggle = document.getElementById('legend-toggle');
-    if (legendToggle && window.innerWidth <= 600) {
-      legendEl2.classList.add('collapsed');
+    if (legendToggle) {
+      legendToggle.style.cursor = 'pointer';
       legendToggle.addEventListener('click', () => {
         legendEl2.classList.toggle('collapsed');
       });
